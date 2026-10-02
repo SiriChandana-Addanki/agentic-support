@@ -1,0 +1,31 @@
+order_id,customer_id,product,amount,status,order_date,delivery_date,expected_delivery_date,payment_method,delivery_pincode,carrier,tracking_stage,delivery_attempts,days_in_current_stage,is_returnable,return_requested_date,refund_status,data_note
+O001,C001,boAt Rockerz 450 Bluetooth Headphones,1499,delivered,2026-09-20,2026-09-24,2026-09-25,prepaid,500081,SwiftShip,delivered,1,7,yes,,none,Return window open until 2026-10-04; below auto-refund limit
+O002,C001,Samsung Galaxy M35 5G 8GB/128GB,18999,delivered,2026-09-22,2026-09-26,2026-09-27,prepaid,500081,SwiftShip,delivered,1,5,yes,,none,Return window open until 2026-10-06; above auto-refund limit
+O003,C002,Puma Softride Running Shoes,3299,delivered,2026-09-01,2026-09-05,2026-09-06,prepaid,560103,RoadRunner Logistics,delivered,1,26,yes,,none,Return window closed on 2026-09-15
+O004,C002,Cotton Double Bedsheet Set,1199,shipped,2026-09-29,,2026-10-03,COD,560103,RoadRunner Logistics,in_transit,0,2,yes,,none,Shipped COD; automatic cancellation not allowed
+O005,C003,Prestige Induction Cooktop,2499,shipped,2026-09-24,,2026-09-28,prepaid,400053,KiteExpress,out_for_delivery,0,2,yes,,none,Out for delivery 2 days; 3 days past expected date; delivery agent unreachable
+O006,C003,Noise ColorFit Pulse Smartwatch,2999,processing,2026-09-30,,2026-10-05,prepaid,400053,SwiftShip,order_confirmed,0,1,yes,,none,Not packed yet; address still editable
+O007,C004,Butterfly Rapid Mixer Grinder,3499,processing,2026-10-01,,2026-10-06,COD,600042,SwiftShip,order_confirmed,0,0,yes,,none,COD selected; can still switch to prepaid or cancel
+O008,C004,Cotton T-Shirt Pack of 3,899,cancelled,2026-09-26,,2026-09-30,prepaid,600042,,cancelled,0,4,yes,,refund_initiated,Cancelled 2026-09-27 before shipping; refund SLA 5-7 business days; still within SLA
+O009,C005,Wildcraft 35L Laptop Backpack Black,2199,delivered,2026-09-25,2026-09-28,2026-09-29,prepaid,110024,KiteExpress,delivered,1,3,yes,,none,Wrong-item complaint case
+O010,C005,Lenovo IdeaPad Slim 3 Laptop,42990,delivered,2026-09-18,2026-09-22,2026-09-23,prepaid,110024,KiteExpress,delivered,1,9,yes,,none,Return window closes 2026-10-02 (last day is tomorrow); high value
+O011,C006,Philips Air Fryer HD9252,6495,delivered,2026-09-26,2026-09-29,2026-09-30,prepaid,411045,SwiftShip,delivered,1,2,yes,,none,Damaged-on-arrival case; above refund limit but below replacement limit
+O012,C006,Levi's 511 Slim Fit Jeans,1799,delivered,2026-09-27,2026-09-30,2026-10-01,COD,411045,SwiftShip,delivered,1,1,yes,,none,COD order; refund needs bank or UPI details
+O013,C007,Mi 20000mAh Power Bank,1799,shipped,2026-09-28,,2026-10-02,prepaid,682016,RoadRunner Logistics,in_transit,0,3,yes,,none,Customer account is locked; do not disclose order details before verification
+O014,C008,Sony WH-CH520 Headphones,3990,shipped,2026-09-27,,2026-09-30,prepaid,380015,KiteExpress,delivery_attempt_failed,1,1,yes,,none,Attempt 1 of 3 failed (customer unavailable); reschedule allowed
+O015,C008,Faber 60cm Kitchen Chimney,11990,processing,2026-09-30,,2026-10-06,prepaid,380015,SwiftShip,packed,0,1,yes,,none,Already packed; address change not automatic
+O016,C009,Fastrack Analog Watch,1695,delivered,2026-09-10,2026-09-14,2026-09-15,prepaid,700091,RoadRunner Logistics,delivered,1,17,yes,,none,Return window closed 2026-09-24; brand warranty may apply
+O017,C009,Bajaj Majesty Room Heater,1349,returned,2026-09-05,2026-09-09,2026-09-10,prepaid,700091,RoadRunner Logistics,return_received,1,14,yes,2026-09-12,refund_pending,Return received 2026-09-17; 7-business-day refund SLA breached
+O018,C010,Dell KM117 Wireless Keyboard Mouse Combo,1399,processing,2026-09-30,,2026-10-05,prepaid,500034,SwiftShip,order_confirmed,0,1,yes,,none,Duplicate of O030 (same product placed twice minutes apart)
+O019,C010,Wakefit Orthopedic Memory Foam Mattress,12499,shipped,2026-09-26,,2026-09-30,COD,500034,SwiftShip,reached_nearby_hub,0,3,yes,,none,1 day past expected date; inside share-status-only threshold
+O020,C011,Pigeon 3-Piece Non-Stick Cookware Set,1299,delivered,2026-09-23,2026-09-27,2026-09-28,COD,226010,KiteExpress,delivered,1,4,yes,,none,Marked delivered; customer says not received
+O021,C011,Realme Buds T110,1299,cancelled,2026-09-28,,2026-10-02,prepaid,226010,,cancelled,0,3,yes,,refunded,Already cancelled and refunded
+O022,C014,Cello Puro Steel Water Bottle 1L,649,delivered,2026-09-25,2026-09-28,2026-09-29,prepaid,695004,SwiftShip,delivered,1,3,yes,,none,Customer claims 6490 was charged; record says 649 (conflict case)
+O023,C013,boAt Airdopes 141 Earbuds,1299,delivered,2026-09-24,2026-09-27,2026-09-28,prepaid,122002,KiteExpress,delivered,1,4,yes,,none,Customer account is suspended; refunds need human review
+O024,C014,Maybelline Fit Me Matte Foundation,599,delivered,2026-09-27,2026-09-30,2026-10-01,prepaid,695004,SwiftShip,delivered,1,1,no,,none,Non-returnable category (cosmetics)
+O025,C014,Voltas 1.5 Ton 3 Star Split AC,34990,processing,2026-09-29,,2026-10-08,prepaid,695004,SwiftShip,packed,0,2,yes,,none,High value but still cancellable (not shipped)
+O026,C015,Syska 9W LED Bulb Pack of 4,499,delivered,2026-09-20,2026-09-24,2026-09-25,prepaid,440010,SwiftShip,delivered,1,7,yes,,none,Second order for C015 (makes vague messages ambiguous)
+O027,C015,Cosmic Byte Gaming Mouse,799,shipped,2026-09-29,,2026-10-03,prepaid,440010,SwiftShip,in_transit,0,2,yes,,none,On schedule
+O028,C001,Fire-Boltt Ninja Smartwatch,1799,shipped,2026-09-28,,2026-10-01,COD,500081,KiteExpress,out_for_delivery,0,0,yes,,none,Out for delivery today
+O029,C005,Pigeon 2-Burner Gas Stove,2499,delivered,2026-09-18,2026-09-22,2026-09-23,prepaid,110024,KiteExpress,return_pickup_scheduled,1,6,yes,2026-09-25,none,Return requested inside window; pickup slot 2026-09-30 was missed
+O030,C010,Dell KM117 Wireless Keyboard Mouse Combo,1399,processing,2026-09-30,,2026-10-05,prepaid,500034,SwiftShip,order_confirmed,0,1,yes,,none,Duplicate of O018; the later of the two

@@ -1,0 +1,16 @@
+customer_id,name,email,account_status,created_at,city
+C001,Aarav Reddy,aarav.reddy@example.com,active,2026-01-10,Hyderabad
+C002,Priya Sharma,priya.sharma@example.com,active,2026-01-18,Bengaluru
+C003,Rohan Mehta,rohan.mehta@example.com,active,2026-02-02,Mumbai
+C004,Ananya Iyer,ananya.iyer@example.com,active,2026-02-14,Chennai
+C005,Vikram Singh,vikram.singh@example.com,active,2026-02-27,Delhi
+C006,Sneha Patil,sneha.patil@example.com,active,2026-03-09,Pune
+C007,Karthik Nair,karthik.nair@example.com,locked,2026-03-21,Kochi
+C008,Meera Joshi,meera.joshi@example.com,active,2026-04-05,Ahmedabad
+C009,Arjun Das,arjun.das@example.com,active,2026-04-19,Kolkata
+C010,Divya Rao,divya.rao@example.com,active,2026-05-02,Hyderabad
+C011,Imran Khan,imran.khan@example.com,active,2026-05-16,Lucknow
+C012,Pooja Verma,pooja.verma@example.com,locked,2026-06-01,Jaipur
+C013,Rahul Gupta,rahul.gupta@example.com,suspended,2026-06-14,Gurugram
+C014,Lakshmi Menon,lakshmi.menon@example.com,active,2026-07-08,Thiruvananthapuram
+C015,Sandeep Kulkarni,sandeep.kulkarni@example.com,active,2026-08-12,Nagpur
