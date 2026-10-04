@@ -18,7 +18,9 @@ class Hardening(unittest.TestCase):
  def test_replacement_requires_evidence_and_stock(self):
   s=Store(ROOT);t=self.tool(s);c=ctx(s,'C006','O011')
   with self.assertRaises(PermissionError):t.execute(ToolInvocation('create_replacement',{'evidence':[],'in_stock':True},True),c)
-  with self.assertRaises(PermissionError):t.execute(ToolInvocation('create_replacement',{'evidence':['a','b'],'in_stock':False},True),c)
+  s.replacement_stock=False
+  self.assertFalse(t.execute(ToolInvocation('check_replacement_stock',{},False),c).data['in_stock'])
+  with self.assertRaises(PermissionError):t.execute(ToolInvocation('create_replacement',{'evidence':['a','b'],'in_stock':True},True),c)
  def test_locked_cannot_read_any_category(self):
   for cat in ['order_status','refund','cancellation','unknown_issue']:
    s=Store(ROOT);r,_=Orchestrator(s,Retriever(ROOT/'business_rules.md')).resolve({'ticket_id':'TX1','customer_id':'C007','category':cat,'order_id':'O013','message':'status','attachments':[]})

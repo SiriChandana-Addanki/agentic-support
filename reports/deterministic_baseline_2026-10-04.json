@@ -1,0 +1,15 @@
+{
+  "planner_type": "deterministic",
+  "recorded_from_commit": "2c36765",
+  "date": "2026-10-04",
+  "evaluation": {
+    "total": 114,
+    "passed": 114,
+    "success_rate": 1.0,
+    "stable_tickets": 38,
+    "p50_latency_ms": 0.36
+  },
+  "test_count": 19,
+  "test_result": "passed",
+  "report": "reports/strict_failure_matrix_baseline_2026-10-04.json"
+}

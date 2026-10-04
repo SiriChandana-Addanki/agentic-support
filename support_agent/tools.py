@@ -15,7 +15,7 @@ class Tools:
    row.update(status='ok',duration_ms=round((time.perf_counter()-start)*1000,2),transition=result.transition);return result
   except Exception as e:
    row.update(status='error',error_type=type(e).__name__,duration_ms=round((time.perf_counter()-start)*1000,2));self.t.errors.append({'tool':i.tool,'type':type(e).__name__});raise
- def _redact(self,p):return {k:('[redacted]' if k in {'address','email','otp','password','upi'} else v) for k,v in p.items()}
+ def _redact(self,p):return {k:('[redacted]' if k in {'address','email','otp','password','upi','reason'} else v) for k,v in p.items()}
  def _order(self,ctx):
   if ctx.principal_id!=ctx.customer_id:raise PermissionError('principal mismatch')
   if not ctx.order_id:raise ValueError('order required')
@@ -35,7 +35,7 @@ class Tools:
    return self._record(i,ctx,read,retry)
   if i.tool=='check_pincode_serviceability':
    pin=i.params.get('pincode');return self._record(i,ctx,lambda:ToolResult(i.tool,True,{'serviceable':isinstance(pin,str) and pin in {'400069','500081','600042','110024','411045','380015','500034','695004','440010'}}),retry)
-  if i.tool=='check_replacement_stock':return self._record(i,ctx,lambda:ToolResult(i.tool,True,{'in_stock':not bool(i.params.get('force_out_of_stock'))}),retry)
+  if i.tool=='check_replacement_stock':return self._record(i,ctx,lambda:ToolResult(i.tool,True,{'in_stock':bool(self.s.replacement_stock)}),retry)
   if i.tool=='cancel_order':
    def f():
     o=self._order(ctx);self._active(ctx)
@@ -70,7 +70,8 @@ class Tools:
   if i.tool=='create_replacement':
    def f():
     o=self._order(ctx);self._active(ctx)
-    if o['status']!='delivered' or float(o['amount'])>10000 or len(i.params.get('evidence',[]))<2 or not i.params.get('in_stock') or o.get('replacement_created')=='yes':raise PermissionError('replacement denied')
+    evidence=i.params.get('evidence',[])
+    if o['status']!='delivered' or float(o['amount'])>10000 or len(ctx.attachments)<2 or sorted(evidence)!=sorted(ctx.attachments) or not self.s.replacement_stock or o.get('replacement_created')=='yes':raise PermissionError('replacement denied')
     o['replacement_created']='yes';return ToolResult(i.tool,True,transition={'replacement_created':['no','yes']})
    return self._record(i,ctx,f,retry)
   if i.tool=='schedule_redelivery':

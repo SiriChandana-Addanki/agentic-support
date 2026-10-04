@@ -5,6 +5,7 @@ from .data import Store
 from .retrieval import Retriever
 from .orchestrator import Orchestrator
 from .evaluation import run
+from .planner import planner_from_env
 MAX=32768
 def validate(p):
  allowed={'ticket_id','customer_id','category','message','order_id','attachments','verified'};required={'ticket_id','customer_id','category','message'}
@@ -15,15 +16,17 @@ def validate(p):
  if not isinstance(p.get('attachments',[]),list) or not all(isinstance(x,str) and len(x)<256 for x in p.get('attachments',[])):raise ValueError('invalid attachments')
  return p
 class App:
- def __init__(self,root):self.root=Path(root);self.store=Store(self.root/'data');self.retriever=Retriever(self.root/'data/business_rules.md');self.resolutions={};self.traces={}
+ def __init__(self,root,planner=None):self.root=Path(root);self.store=Store(self.root/'data');self.retriever=Retriever(self.root/'data/business_rules.md');self.planner=planner or planner_from_env();self.resolutions={};self.traces={}
+ @property
+ def planner_type(self):return getattr(self.planner,'planner_type','deterministic')
  def submit(self,p):
-  p=validate(p);r,t=Orchestrator(self.store,self.retriever).resolve(p);self.resolutions[r.ticket_id]=r.to_dict();self.traces[r.ticket_id]=t.safe_dict();return self.resolutions[r.ticket_id]
+  p=validate(p);r,t=Orchestrator(self.store,self.retriever,self.planner).resolve(p);self.resolutions[r.ticket_id]=r.to_dict();self.traces[r.ticket_id]=t.safe_dict();return self.resolutions[r.ticket_id]
 def handler(app):
  class H(BaseHTTPRequestHandler):
   def sendj(self,s,o):
    b=json.dumps(o).encode();self.send_response(s);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(b)));self.end_headers();self.wfile.write(b)
   def do_GET(self):
-   if self.path=='/health':return self.sendj(200,{'status':'ok','development_only':True})
+   if self.path=='/health':return self.sendj(200,{'status':'ok','development_only':True,'planner_type':app.planner_type})
    for prefix,data in [('/resolutions/',app.resolutions),('/observability/',app.traces)]:
     if self.path.startswith(prefix):
      k=self.path[len(prefix):];return self.sendj(200,data[k]) if k in data else self.sendj(404,{'error':'not found'})
@@ -35,7 +38,7 @@ def handler(app):
     if n<0 or n>MAX:raise ValueError('invalid body size')
     p=json.loads(self.rfile.read(n))
     if self.path=='/tickets':return self.sendj(200,app.submit(p))
-    if self.path=='/evaluations':return self.sendj(200,run(app.root/'data',p.get('ticket_ids'),p.get('repeats',1)))
+    if self.path=='/evaluations':return self.sendj(200,run(app.root/'data',p.get('ticket_ids'),p.get('repeats',1),planner_type=p.get('planner_type',app.planner_type)))
     self.sendj(404,{'error':'not found'})
    except json.JSONDecodeError:self.sendj(400,{'error':'malformed json'})
    except ValueError as e:self.sendj(422,{'error':str(e)})
