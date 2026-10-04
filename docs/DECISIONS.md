@@ -11,3 +11,4 @@
 * Tool authorization is duplicated at the action boundary; orchestration/policy approval is not trusted as the final security control.
 * Evaluation fixtures are isolated from normal ticket submission. The stricter evaluator intentionally may score lower than the previous action-label harness.
 * Prompt-injection containment is principally typed-plan/policy/tool isolation; heuristic labeling is not treated as a security boundary.
+* 2026-10-04 audit report preserves the supplied fixture data and exports each strict-evaluation failure with observed criteria, tools, state, policy summary, and taxonomy. It does not alter expected fixture fields to improve the score.

@@ -20,3 +20,6 @@ Locked, unverified accounts cannot read order data regardless of category. Suspe
 
 ## Evaluation
 The evaluator runs fixture tickets against a fresh store and records C1–C7: understanding, evidence, tools, parameter validity, authorization, action, and actual final state. It also checks write duplication/extra tools and repeat stability. Results are fixture-conformance evidence, not model quality, security certification, production latency, or proof that all policy requirements are complete. The prior 114/114 score is superseded by this stricter methodology; run the command above for the current result.
+
+## Audit result
+The 2026-10-04 strict three-repeat audit produced 114 rows: 57 passed and 57 failed (50.0%), with 38/38 stable tickets and 0.62 ms local p50. Per-row auditable failures are committed in `reports/strict_failure_matrix.json`; the human index is `docs/EVALUATION_FAILURE_MATRIX.md`. The failures are evidence of incomplete behavior/contracts, not a reason to relax evaluation or safety controls.
