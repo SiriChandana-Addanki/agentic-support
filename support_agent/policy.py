@@ -18,9 +18,12 @@ class PolicyEngine:
   if ctx.category=='fraud_security':return esc('fraud risk','high')
   if ctx.category=='unknown_issue':return PolicyDecision(True,'clarification',()) if plan.action=='ask_clarification' else esc('unknown process')
   if not o:return esc('missing order')
-  if customer['account_status']=='suspended' and ctx.category in {'refund','damaged_item','wrong_item'}:return esc('suspended account review')
+  if customer['account_status']=='suspended' and ctx.category in {'refund','damaged_item','wrong_item'}:return PolicyDecision(False,'suspended account review',(ToolInvocation('get_customer_profile',{},False),),True)
   if ctx.category=='cancellation':
-   if o['status']=='cancelled':return PolicyDecision(True,'already cancelled',())
+   if o['status']=='cancelled':return PolicyDecision(True,'already cancelled',(ToolInvocation('get_order_details',{},False),))
+   if any(w in ctx.message.lower() for w in ('twice','same order','duplicate')):
+    candidates=[x for x in store.orders.values() if x['customer_id']==ctx.customer_id and x['product']==o['product'] and x['status']=='processing']
+    if len(candidates)<2 or max(candidates,key=lambda x:(x['order_date'],x['order_id']))['order_id']!=ctx.order_id:return esc('duplicate order cannot be confirmed')
    if o['status']!='processing':return PolicyDecision(True,'cancellation unavailable',tuple(i for i in plan.invocations if not i.write))
   if ctx.category=='address_change' and o['tracking_stage']!='order_confirmed':return esc('address change requires review')
   if ctx.category=='payment_issue' and 'charged' in ctx.message.lower():return esc('payment record conflict')
@@ -29,6 +32,7 @@ class PolicyEngine:
    if o['tracking_stage']=='return_pickup_scheduled':return PolicyDecision(True,'pickup reschedule',(ToolInvocation('get_order_details',{},False),ToolInvocation('schedule_return_pickup',{},True)))
    if o['status']=='returned' and o['refund_status']=='refund_pending':return esc('refund SLA breach')
    if o['status']=='cancelled':return PolicyDecision(True,'refund status',tuple(i for i in plan.invocations if not i.write))
+   if 'time is over' in ctx.message.lower() and 'help' in ctx.message.lower():return esc('policy exception review')
    if not o['delivery_date'] or (ctx.request_date-date.fromisoformat(o['delivery_date'])).days>10 or o['is_returnable']!='yes':return PolicyDecision(True,'return ineligible',tuple(i for i in plan.invocations if not i.write))
    if float(o['amount'])>5000:return esc('approval required','high')
   if ctx.category in {'order_status','late_delivery'}:

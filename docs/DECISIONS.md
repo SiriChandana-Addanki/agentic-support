@@ -12,3 +12,6 @@
 * Evaluation fixtures are isolated from normal ticket submission. The stricter evaluator intentionally may score lower than the previous action-label harness.
 * Prompt-injection containment is principally typed-plan/policy/tool isolation; heuristic labeling is not treated as a security boundary.
 * 2026-10-04 audit report preserves the supplied fixture data and exports each strict-evaluation failure with observed criteria, tools, state, policy summary, and taxonomy. It does not alter expected fixture fields to improve the score.
+* 2026-10-04 evaluator repair removed ticket-ID state branches and a T036 duplicate-write exemption. A recovered malformed response is not an invalid parameter, and an empty retrieval result still proves the retrieval path was attempted. Stability compares actual final state as well as actions and tool traces.
+* 2026-10-04 duplicate cancellation is a reusable order-list capability: policy and the tool independently require two matching processing orders and target the later one. Already-cancelled orders are read for their recorded refund status and receive no write.
+* 2026-10-04 repeated order-read failure now gets a bounded retry sequence and an escalation with an unavailable-status response. No fabricated status is returned.

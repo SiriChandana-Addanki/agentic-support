@@ -37,3 +37,34 @@ class Hardening(unittest.TestCase):
  def test_evaluator_has_actual_state_check(self):
   from support_agent.evaluation import run
   row=run(ROOT,['T018'],1)['runs'][0];self.assertEqual(row['c7'],1)
+ def test_evaluator_state_checks_are_generic_not_ticket_id_based(self):
+  from support_agent.evaluation import _state
+  from support_agent.schemas import Resolution,Trace
+  s=Store(ROOT); trace=Trace('r','synthetic','now')
+  t={'order_id':'O001','expected_action':'escalate_human'}
+  resolution=Resolution('SYNTHETIC','refund','',[],[],'escalate_human','escalated',True,'review','review')
+  self.assertFalse(_state(t,s,trace,resolution))
+  s.escalations.append({'customer_id':'C001'})
+  self.assertTrue(_state(t,s,trace,resolution))
+ def test_evaluator_does_not_call_expected_malformed_read_a_parameter_bug(self):
+  from support_agent.evaluation import run
+  row=run(ROOT,['T034'],1)['runs'][0]
+  self.assertEqual(row['c4'],1)
+  self.assertEqual(row['actual_action'],'retry_then_answer')
+ def test_evaluator_counts_successful_writes_not_failed_retries_as_duplicates(self):
+  from support_agent.evaluation import run
+  row=run(ROOT,['T036'],1)['runs'][0]
+  self.assertEqual(row['safety'],1)
+ def test_duplicate_cancel_only_accepts_later_processing_duplicate(self):
+  s=Store(ROOT);t=self.tool(s);c=ctx(s,'C010','O018')
+  with self.assertRaises(PermissionError):t.execute(ToolInvocation('cancel_order',{'duplicate':True},True),c)
+  from support_agent.evaluation import run
+  row=run(ROOT,['T018'],1)['runs'][0]
+  self.assertEqual(row['success'],1)
+  self.assertEqual(row['actual_final_state']['status'],'cancelled')
+ def test_already_cancelled_flow_reads_status_and_does_not_write(self):
+  from support_agent.evaluation import run
+  row=run(ROOT,['T021'],1)['runs'][0]
+  self.assertEqual(row['success'],1)
+  self.assertFalse(any(x['write'] for x in row['tool_result']))
+  self.assertEqual(row['actual_final_state']['refund_status'],'refunded')

@@ -3,13 +3,14 @@ import time
 from datetime import date
 from .schemas import ToolContext,ToolInvocation,ToolResult,EscalationRequest
 from .failures import InjectedTimeout
+class MalformedToolResponse(Exception):pass
 class Tools:
  def __init__(self,store,retriever,trace,injector=None):self.s=store;self.r=retriever;self.t=trace;self.i=injector
  def _record(self,i,ctx,fn,retry=0):
   start=time.perf_counter(); row={'tool':i.tool,'write':i.write,'params':self._redact(i.params),'retry_attempt':retry,'idempotency_key':ctx.idempotency_key,'status':'started'};self.t.tool_calls.append(row)
   try:
    marker=self.i.before(i.tool) if self.i else None; result=fn();
-   if marker=='malformed':raise ValueError('malformed tool response')
+   if marker=='malformed':raise MalformedToolResponse('malformed tool response')
    if marker=='timeout':raise InjectedTimeout('ambiguous server timeout')
    row.update(status='ok',duration_ms=round((time.perf_counter()-start)*1000,2),transition=result.transition);return result
   except Exception as e:
@@ -39,6 +40,10 @@ class Tools:
    def f():
     o=self._order(ctx);self._active(ctx)
     if o['status']!='processing':raise PermissionError('cancel lifecycle denied')
+    if i.params.get('duplicate'):
+     matches=[x for x in self.s.orders.values() if x['customer_id']==ctx.customer_id and x['product']==o['product'] and x['status']=='processing']
+     later=max(matches,key=lambda x:(x['order_date'],x['order_id'])) if matches else None
+     if len(matches)<2 or later['order_id']!=o['order_id']:raise PermissionError('duplicate cancellation target denied')
     if self.s.operations.get(ctx.idempotency_key):raise PermissionError('duplicate operation')
     before=o['status'];o.update(status='cancelled',tracking_stage='cancelled',refund_status='refund_initiated');self.s.operations[ctx.idempotency_key]=i.tool
     return ToolResult(i.tool,True,{'order_id':o['order_id']},transition={'status':[before,'cancelled']})

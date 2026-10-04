@@ -10,3 +10,11 @@ Verification: `python -m unittest discover -s tests -v` passed 14 tests. The str
 
 ## 2026-10-04 — strict evaluation audit
 Added machine-readable `reports/strict_failure_matrix.json` and human-readable `docs/EVALUATION_FAILURE_MATRIX.md`. The full three-repeat audit measured 57/114 passes, 38 stable tickets, and classified the 57 observed failures: 48 legitimate unimplemented behavior, 3 planner, 3 tool, and 3 evaluator/final-state contract categories. This report is intentionally an audit artifact, not a benchmark claim.
+
+## 2026-10-04 — evaluator corrections and reusable gap resolution
+
+Removed evaluator state branches keyed to ticket IDs, removed the T036 safety exemption, included final state in repeat stability, treated an empty KB response as a completed retrieval attempt, and stopped treating an expected malformed response as an invalid parameter. The prior matrix is retained at `reports/strict_failure_matrix_baseline_2026-10-04.json`.
+
+Completed shared policy-evidence reads and denial-time authorized reads; added exception handling for overdue return requests, suspended-account profile escalation, identity/unknown-process escalation reads, and three-attempt order-service recovery followed by escalation. Duplicate-order cancellation checks matching customer-owned processing orders in both policy and the write tool and cancels only the later order. Already-cancelled orders report their recorded refund status without a write. The duplicate-target tool regression test confirms direct invalid invocation is rejected.
+
+Verification: `python -m unittest discover -s tests -v` passed 19 tests. `python -m support_agent evaluate --repeats 3` passed 114/114 rows (100%), with 38/38 stable tickets and 0.38 ms local p50 for this run. Previous strict result: 57/114 (50%), 38/38 stable. Current failures: 0 legitimate behavior, 0 planner, 0 tool, 0 evaluator rows. These fixture results are not a model-quality or production benchmark. Remaining architecture and coverage limits are recorded in `docs/BEHAVIOR_GAP_PLAN.md`.
