@@ -1,0 +1,2 @@
+# Architecture
+`TicketContext → Retriever → Planner → ActionPlan → PolicyEngine → PolicyDecision → Tools → ToolResult → Resolution` is the execution boundary. Planner output is validated and retried before any tool runs. Tools receive `ToolContext`, not raw planner authority, and independently validate ownership, account status, lifecycle, dates, evidence, stock, serviceability, and idempotency. The API is development-only and unauthenticated. Traces are sanitized operational records, not customer-facing endpoints.
