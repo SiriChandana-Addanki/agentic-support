@@ -15,7 +15,18 @@ class Orchestrator:
   return TicketContext(t['ticket_id'],t['customer_id'],t.get('category','unknown_issue'),t['message'],t.get('order_id'),tuple(t.get('attachments',[])),date(2026,10,1),bool(t.get('verified',False)))
  def resolve(self,ticket,failure_injection=None):
   start=time.perf_counter();ctx=self._context(ticket);trace=Trace(uuid.uuid4().hex,ctx.ticket_id,datetime.now(timezone.utc).isoformat());trace.planner_type=getattr(self.planner,'planner_type','deterministic');inj=FailureInjector(failure_injection);tools=Tools(self.store,self.retriever,trace,inj)
-  customer=self.store.customer(ctx.customer_id); status=customer['account_status'] if customer else 'unknown'; tc=ToolContext(ctx.customer_id,ctx.customer_id,ctx.ticket_id,ctx.order_id,status,ctx.verified,ctx.request_date,uuid.uuid4().hex,ctx.attachments)
+  customer=self.store.customer(ctx.customer_id); status=customer['account_status'] if customer else 'unknown'
+  locked_unverified=status=='locked' and not ctx.verified
+  safe_order_fields={'order_id','product','amount','status','tracking_stage','order_date','delivery_date','expected_delivery_date','payment_method','delivery_attempts','days_in_current_stage','is_returnable','return_requested_date','refund_status','delivery_pincode'}
+  order_state={}
+  if ctx.order_id and not locked_unverified:
+   order=self.store.orders.get(ctx.order_id)
+   if order and order.get('customer_id')==ctx.customer_id:order_state={k:order[k] for k in safe_order_fields if k in order}
+  candidate_orders=()
+  if not ctx.order_id and not locked_unverified:
+   candidate_orders=tuple({k:o[k] for k in ('order_id','product','status','tracking_stage','order_date') if k in o} for o in self.store.orders.values() if o.get('customer_id')==ctx.customer_id)
+  ctx=replace(ctx,account_status=status,order_state=order_state,customer_orders=candidate_orders,replacement_stock=bool(self.store.replacement_stock))
+  tc=ToolContext(ctx.customer_id,ctx.customer_id,ctx.ticket_id,ctx.order_id,status,ctx.verified,ctx.request_date,uuid.uuid4().hex,ctx.attachments)
   query=f'{ctx.category} {ctx.message}'; evidence=self.retriever.search(query,inj.mode);trace.retrieval=[e.__dict__ for e in evidence]
   def finish(action,summary,state='resolved',esc=False,reason=None,text=None):
    trace.final_action=action;trace.final_status=state;trace.escalation=esc;trace.latency_ms=round((time.perf_counter()-start)*1000,2)

@@ -1,0 +1,36 @@
+{
+  "command": "python -m support_agent evaluate --planner-type llm --repeats 3",
+  "exit_code": 0,
+  "stderr": "",
+  "summary": {
+    "planner_type": "llm",
+    "total": 114,
+    "passed": 0,
+    "success_rate": 0.0,
+    "llm_successes": 0,
+    "llm_failed_with_fallback": 114,
+    "llm_failed_no_fallback": 0,
+    "stable_tickets": 38,
+    "p50_latency_ms": 226.26999999999998
+  },
+  "row_count": 114,
+  "provider_status_counts": {
+    "429": 114
+  },
+  "planner_error_types": {
+    "ProviderRateLimit": 114
+  },
+  "fallback_rows": 114,
+  "llm_successes": 0,
+  "llm_failed_with_fallback": 114,
+  "llm_failed_no_fallback": 0,
+  "fixture_success_rows": 114,
+  "stable_tickets": 38,
+  "policy_denials": 39,
+  "p50_planner_latency_ms": 224.32,
+  "p95_planner_latency_ms": 494.63,
+  "token_usage_unavailable_rows": 114,
+  "total_input_tokens": null,
+  "total_output_tokens": null,
+  "estimated_cost_usd": null
+}
