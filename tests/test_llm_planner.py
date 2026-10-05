@@ -1,5 +1,6 @@
 import json
 import os
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -10,7 +11,7 @@ from support_agent.llm_planner import LLMPlanner,PlannerValidationError,action_p
 from support_agent.mock_provider import MockLLMProvider
 from support_agent.orchestrator import Orchestrator
 from support_agent.planner import DeterministicPlanner,ShadowPlanner,planner_from_env
-from support_agent.providers import OpenAICompatibleProvider,ProviderTimeout,ProviderError
+from support_agent.providers import OpenAICompatibleProvider,ProviderTimeout,ProviderError,provider_from_env
 from support_agent.retrieval import Retriever
 from support_agent.schemas import ActionPlan,RetrievedEvidence,TicketContext,ToolInvocation
 from support_agent.schemas import ToolContext,Trace
@@ -24,6 +25,20 @@ def resolve(ticket_id,provider):
  return Orchestrator(s,Retriever(DATA/'business_rules.md'),LLMPlanner(provider)).resolve(ticket,ticket.get('failure_injection'))
 
 class LLMPlannerTests(unittest.TestCase):
+ def test_local_dotenv_loads_provider_and_planner_configuration(self):
+  old=os.getcwd()
+  with tempfile.TemporaryDirectory() as directory:
+   Path(directory,'.env').write_text('OPENAI_API_KEY=test-secret\nLLM_MODEL=test-model\nLLM_TEMPERATURE=0.2\nPLANNER_TYPE=llm\n',encoding='utf-8')
+   try:
+    os.chdir(directory)
+    with patch.dict(os.environ,{},clear=True):
+     provider=provider_from_env()
+     self.assertIsInstance(provider,OpenAICompatibleProvider)
+     self.assertEqual(provider.model,'test-model')
+     self.assertEqual(provider.temperature,0.2)
+     self.assertEqual(planner_from_env().planner_type,'llm')
+   finally:os.chdir(old)
+
  def test_deterministic_and_llm_implement_same_typed_contract(self):
   s=Store(DATA);t=s.tickets['T029'];ctx=TicketContext(t['ticket_id'],t['customer_id'],t['category'],t['message'],t['order_id'])
   det=DeterministicPlanner().plan(ctx,[]);llm=LLMPlanner(MockLLMProvider()).plan(ctx,[])
@@ -152,9 +167,14 @@ class LLMPlannerTests(unittest.TestCase):
     self.assertIn(trace.planner_error_type,{'ProviderTimeout','ProviderError'})
 
  def test_planner_configuration_defaults_to_deterministic(self):
-  with patch.dict(os.environ,{},clear=True):self.assertEqual(planner_from_env().planner_type,'deterministic')
-  with patch.dict(os.environ,{'PLANNER_TYPE':'llm'},clear=True):
-   with self.assertRaisesRegex(ValueError,'OPENAI_API_KEY'):planner_from_env()
+  old=os.getcwd()
+  with tempfile.TemporaryDirectory() as directory:
+   try:
+    os.chdir(directory)
+    with patch.dict(os.environ,{},clear=True):self.assertEqual(planner_from_env().planner_type,'deterministic')
+    with patch.dict(os.environ,{'PLANNER_TYPE':'llm'},clear=True):
+     with self.assertRaisesRegex(ValueError,'OPENAI_API_KEY'):planner_from_env()
+   finally:os.chdir(old)
 
  def test_strict_action_schema_rejects_invalid_tool_write_flags_and_urls(self):
   s=Store(DATA);t=s.tickets['T029'];ctx=TicketContext(t['ticket_id'],t['customer_id'],t['category'],t['message'],t['order_id'])

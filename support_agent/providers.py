@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any,Protocol
 import json,os,urllib.error,urllib.request,uuid
+from pathlib import Path
 
 class ProviderError(RuntimeError):pass
 class ProviderTimeout(ProviderError):pass
@@ -56,7 +57,23 @@ class OpenAICompatibleProvider:
   except ProviderError:raise
   except (KeyError,IndexError,TypeError):raise ProviderResponseError('provider response omitted structured content') from None
 
+def load_local_env():
+ # Load the project-local .env without a third-party dependency. Existing
+ # process environment wins, and values are never printed or logged.
+ env_path=Path('.env')
+ if env_path.is_file():
+  try:
+   for line in env_path.read_text(encoding='utf-8').splitlines():
+    stripped=line.strip()
+    if not stripped or stripped.startswith('#') or '=' not in stripped:continue
+    name,value=stripped.split('=',1);name=name.strip();value=value.strip()
+    if value[:1] in {'"',"'"} and len(value)>=2 and value[-1:]==value[:1]:value=value[1:-1]
+    if name and name.replace('_','').isalnum() and name not in os.environ:os.environ[name]=value
+  except OSError:
+   pass
+
 def provider_from_env():
+ load_local_env()
  key=os.getenv('OPENAI_API_KEY','').strip()
  if not key:return None
  return OpenAICompatibleProvider(key,model=os.getenv('LLM_MODEL','gpt-4o-mini'),base_url=os.getenv('LLM_BASE_URL','https://api.openai.com/v1'),temperature=float(os.getenv('LLM_TEMPERATURE','0')),timeout=float(os.getenv('LLM_TIMEOUT_SECONDS','20')),max_output_tokens=int(os.getenv('LLM_MAX_OUTPUT_TOKENS','700')))

@@ -8,7 +8,7 @@ The stable contract is `Planner.plan(TicketContext, RetrievedEvidence) -> Action
 
 ## Provider and configuration
 
-The first provider, `OpenAICompatibleProvider`, uses the standard library HTTP client and a JSON Schema structured response. Configuration comes from environment variables or `.env.example`:
+The first provider, `OpenAICompatibleProvider`, uses the standard library HTTP client and a JSON Schema structured response. Configuration comes from process environment variables or a local, gitignored `.env` file. Existing process environment values take precedence. `.env.example` was removed and is intentionally not part of this repository state.
 
 | Variable | Default | Meaning |
 |---|---|---|
@@ -21,6 +21,8 @@ The first provider, `OpenAICompatibleProvider`, uses the standard library HTTP c
 | `LLM_MAX_OUTPUT_TOKENS` | `700` | Completion limit |
 
 No API key is committed. No provider call occurs in deterministic mode. The implementation requests structured JSON Schema output and validates the result locally as well; provider structured output is not treated as an authorization boundary.
+
+The planner retries one invalid structured response once. Provider errors, including rate limits, are not retried; they trigger the documented deterministic fallback. Select the mode explicitly with `python -m support_agent evaluate --planner-type llm` or `--planner-type shadow`.
 
 ## Input and untrusted data
 
@@ -47,4 +49,4 @@ Run `python -m support_agent evaluate --planner-type deterministic --repeats 3` 
 
 ## Limits
 
-No live provider evaluation was executed in this environment because `OPENAI_API_KEY` is absent. The provider integration is OpenAI-compatible, but only the configured provider API shape is implemented. The planner uses one proposed intent/action at a time; complex multi-intent tickets should clarify or escalate. Attachment names are metadata rather than inspected images. The deterministic fallback can rely on the supplied category hint. The service remains in-memory and unauthenticated, and its 38 fixtures are not a quality or production benchmark.
+The 2026-10-05 live smoke attempt reached the configured OpenAI endpoint but received HTTP 429 (rate limited). It therefore did not validate a live model plan, and the 38-ticket LLM suite was not run. The smoke trace used deterministic fallback; its fixture pass is not an LLM result. The provider integration is OpenAI-compatible, but only the configured provider API shape is implemented. The planner uses one proposed intent/action at a time; complex multi-intent tickets should clarify or escalate. Attachment names are metadata rather than inspected images. The deterministic fallback can rely on the supplied category hint. The service remains in-memory and unauthenticated, and its 38 fixtures are not a quality or production benchmark.

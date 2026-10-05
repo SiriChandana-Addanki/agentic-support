@@ -1,6 +1,6 @@
 from .schemas import ActionPlan,ToolInvocation
 from contextvars import ContextVar
-from .providers import provider_from_env
+from .providers import load_local_env,provider_from_env
 from .llm_planner import LLMPlanner
 class DeterministicPlanner:
  planner_type='deterministic'
@@ -51,6 +51,7 @@ class ShadowPlanner:
 
 def planner_from_env(kind=None,provider_override=None):
  import os
+ load_local_env()
  kind=(kind or os.getenv('PLANNER_TYPE','deterministic')).strip().lower()
  if kind not in {'deterministic','llm','shadow'}:raise ValueError('PLANNER_TYPE must be deterministic, llm, or shadow')
  deterministic=DeterministicPlanner()
