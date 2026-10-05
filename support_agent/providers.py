@@ -34,6 +34,7 @@ class OpenAICompatibleProvider:
   self.api_key=api_key;self.model=model;self.base_url=base_url.rstrip('/');self.temperature=temperature;self.timeout=timeout;self.max_output_tokens=max_output_tokens;self.provider_name=provider_name
  def generate_structured_plan(self,*,system_prompt,input_json,schema):
   payload={'model':self.model,'temperature':self.temperature,'max_completion_tokens':self.max_output_tokens,'messages':[{'role':'system','content':system_prompt},{'role':'user','content':input_json}],'response_format':{'type':'json_schema','json_schema':{'name':'support_action_plan','strict':True,'schema':schema}}}
+  if self.provider_name=='openrouter':payload['reasoning_effort']='none'
   request=urllib.request.Request(self.base_url+'/chat/completions',data=json.dumps(payload).encode(),headers={'Authorization':'Bearer '+self.api_key,'Content-Type':'application/json','X-Client-Request-Id':uuid.uuid4().hex},method='POST')
   try:
    with urllib.request.urlopen(request,timeout=self.timeout) as response:

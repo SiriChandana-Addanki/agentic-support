@@ -190,7 +190,7 @@ class LLMPlannerTests(unittest.TestCase):
    with self.assertRaises(error):MockLLMProvider(scenario).generate_structured_plan(system_prompt='x',input_json='{}',schema={})
 
  def test_provider_sends_structured_json_schema_without_logging_secret(self):
-  provider=OpenAICompatibleProvider('test-secret',model='test-model')
+  provider=OpenAICompatibleProvider('test-secret',model='test-model',provider_name='openrouter')
   class Response:
    headers={'x-request-id':'req-test'}
    def __enter__(self):return self
@@ -200,6 +200,9 @@ class LLMPlannerTests(unittest.TestCase):
    response=provider.generate_structured_plan(system_prompt='system',input_json='{}',schema=action_plan_json_schema())
   self.assertEqual(response.request_id,'req-test');self.assertEqual(response.input_tokens,3)
   request=call.call_args.args[0]
+  payload=json.loads(request.data)
+  self.assertEqual(payload['response_format']['json_schema']['strict'],True)
+  self.assertEqual(payload['reasoning_effort'],'none')
   self.assertIn(b'Bearer test-secret',request.headers['Authorization'].encode())
   self.assertNotIn('test-secret',repr(response))
 
