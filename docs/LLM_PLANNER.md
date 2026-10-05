@@ -8,19 +8,21 @@ The stable contract is `Planner.plan(TicketContext, RetrievedEvidence) -> Action
 
 ## Provider and configuration
 
-The first provider, `OpenAICompatibleProvider`, uses the standard library HTTP client and a JSON Schema structured response. Configuration comes from process environment variables or a local, gitignored `.env` file. Existing process environment values take precedence. `.env.example` was removed and is intentionally not part of this repository state.
+The provider abstraction uses the standard library HTTP client and a JSON Schema structured response. It supports OpenAI-compatible OpenAI and OpenRouter endpoints. Configuration comes from process environment variables or a local, gitignored `.env` file. Existing process environment values take precedence. `.env.example` was removed and is intentionally not part of this repository state.
 
 | Variable | Default | Meaning |
 |---|---|---|
 | `PLANNER_TYPE` | `deterministic` | Selected planner |
-| `OPENAI_API_KEY` | empty | Required only for LLM mode |
-| `LLM_MODEL` | `gpt-4o-mini` | Provider model name |
-| `LLM_BASE_URL` | OpenAI API v1 URL | OpenAI-compatible API base |
+| `LLM_PROVIDER` | `openai` | Provider (`openai` or `openrouter`) |
+| `OPENAI_API_KEY` | empty | Required for OpenAI mode |
+| `OPENROUTER_API_KEY` | empty | Required for OpenRouter mode |
+| `LLM_MODEL` | Provider-specific | Model name (`openrouter/free` for the OpenRouter free router) |
+| `LLM_BASE_URL` | Provider-specific | OpenAI or OpenRouter API v1 base URL |
 | `LLM_TEMPERATURE` | `0` | Sampling temperature |
 | `LLM_TIMEOUT_SECONDS` | `20` | Per-request timeout |
 | `LLM_MAX_OUTPUT_TOKENS` | `700` | Completion limit |
 
-No API key is committed. No provider call occurs in deterministic mode. The implementation requests structured JSON Schema output and validates the result locally as well; provider structured output is not treated as an authorization boundary.
+No API key is committed. No provider call occurs in deterministic mode. For OpenRouter, use `LLM_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, `LLM_MODEL=openrouter/free`, and `LLM_BASE_URL=https://openrouter.ai/api/v1`. The implementation requests structured JSON Schema output and validates the result locally as well; provider structured output is not treated as an authorization boundary.
 
 The planner retries one invalid structured response once. Provider errors, including rate limits, are not retried; they trigger the documented deterministic fallback. Select the mode explicitly with `python -m support_agent evaluate --planner-type llm` or `--planner-type shadow`.
 
@@ -49,4 +51,4 @@ Run `python -m support_agent evaluate --planner-type deterministic --repeats 3` 
 
 ## Limits
 
-The 2026-10-05 live smoke attempt reached the configured OpenAI endpoint but received HTTP 429 (rate limited). It therefore did not validate a live model plan, and the 38-ticket LLM suite was not run. The smoke trace used deterministic fallback; its fixture pass is not an LLM result. The provider integration is OpenAI-compatible, but only the configured provider API shape is implemented. The planner uses one proposed intent/action at a time; complex multi-intent tickets should clarify or escalate. Attachment names are metadata rather than inspected images. The deterministic fallback can rely on the supplied category hint. The service remains in-memory and unauthenticated, and its 38 fixtures are not a quality or production benchmark.
+The 2026-10-05 OpenAI smoke attempt received HTTP 429 and did not validate a live model plan. The subsequent OpenRouter smoke command was issued once, but its execution result was not captured, so it also cannot be counted as a live plan validation. The 38-ticket LLM suite was not run. No fallback or model result is claimed for the OpenRouter attempt. The planner uses one proposed intent/action at a time; complex multi-intent tickets should clarify or escalate. Attachment names are metadata rather than inspected images. The deterministic fallback can rely on the supplied category hint. The service remains in-memory and unauthenticated, and its 38 fixtures are not a quality or production benchmark.

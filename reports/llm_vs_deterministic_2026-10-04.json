@@ -8,30 +8,29 @@
     "stable_tickets": 38,
     "p50_latency_ms": 0.36
   },
-  "llm_evaluation": {
+  "openrouter_evaluation": {
     "status": "not executed",
-    "reason": "Single-ticket live smoke received HTTP 429 (ProviderRateLimit); no validated model ActionPlan was returned.",
+    "reason": "The one required smoke command produced no captured result; a model response and validated ActionPlan could not be verified.",
     "full_suite_started": false,
     "metrics": null
   },
   "smoke_test": {
     "command": "python -m support_agent evaluate --planner-type llm --ticket T001 --repeats 1",
-    "provider": "openai-compatible",
-    "model": "gpt-4o-mini",
-    "provider_error": "ProviderRateLimit",
-    "planner_validation": "provider_error",
-    "fallback": true,
-    "fallback_fixture_row_passed": true,
-    "live_plan_validated": false,
+    "attempted_once": true,
+    "provider": "openrouter",
+    "model": "openrouter/free",
+    "result": "unverified; execution output unavailable",
+    "provider_error_category": null,
+    "live_plan_validated": null,
+    "fallback": null,
     "tokens": null,
     "estimated_cost_usd": null,
-    "latency_ms": 2048.64,
-    "planner_latency_ms": 2040.85
+    "latency_ms": null
   },
   "comparison": null,
   "notes": [
-    "The one-ticket smoke row passed only after deterministic fallback; it is not an LLM success.",
-    "No full LLM suite was run and no LLM score, token total, cost, stability, or quality metrics are inferred.",
-    "The HTTP 429 response does not distinguish rate limiting from account quota; the provider error body is intentionally not logged."
+    "No live OpenRouter metric is inferred from the smoke attempt.",
+    "No second API request was made and the complete LLM suite was not run.",
+    "The deterministic baseline artifact was not modified."
   ]
 }

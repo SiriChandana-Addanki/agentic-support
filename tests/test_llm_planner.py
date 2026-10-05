@@ -28,14 +28,16 @@ class LLMPlannerTests(unittest.TestCase):
  def test_local_dotenv_loads_provider_and_planner_configuration(self):
   old=os.getcwd()
   with tempfile.TemporaryDirectory() as directory:
-   Path(directory,'.env').write_text('OPENAI_API_KEY=test-secret\nLLM_MODEL=test-model\nLLM_TEMPERATURE=0.2\nPLANNER_TYPE=llm\n',encoding='utf-8')
+   Path(directory,'.env').write_text('LLM_PROVIDER=openrouter\nOPENROUTER_API_KEY=test-secret\nLLM_MODEL=openrouter/free\nLLM_BASE_URL=https://openrouter.ai/api/v1\nLLM_TEMPERATURE=0\nPLANNER_TYPE=llm\n',encoding='utf-8')
    try:
     os.chdir(directory)
     with patch.dict(os.environ,{},clear=True):
      provider=provider_from_env()
      self.assertIsInstance(provider,OpenAICompatibleProvider)
-     self.assertEqual(provider.model,'test-model')
-     self.assertEqual(provider.temperature,0.2)
+     self.assertEqual(provider.provider_name,'openrouter')
+     self.assertEqual(provider.model,'openrouter/free')
+     self.assertEqual(provider.base_url,'https://openrouter.ai/api/v1')
+     self.assertEqual(provider.temperature,0.0)
      self.assertEqual(planner_from_env().planner_type,'llm')
    finally:os.chdir(old)
 

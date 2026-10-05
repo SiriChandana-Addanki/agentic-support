@@ -58,6 +58,9 @@ def planner_from_env(kind=None,provider_override=None):
  if kind=='deterministic':return deterministic
  provider=provider_override or provider_from_env()
  if kind=='llm':
-  if provider is None:raise ValueError('PLANNER_TYPE=llm requires OPENAI_API_KEY')
+  if provider is None:
+   import os
+   key_name='OPENROUTER_API_KEY' if os.getenv('LLM_PROVIDER','openai').strip().lower()=='openrouter' else 'OPENAI_API_KEY'
+   raise ValueError(f'PLANNER_TYPE=llm requires {key_name}')
   return LLMPlanner(provider)
  return ShadowPlanner(deterministic,LLMPlanner(provider) if provider else None)

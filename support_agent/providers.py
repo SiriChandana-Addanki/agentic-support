@@ -27,12 +27,11 @@ class LLMProvider(Protocol):
 
 class OpenAICompatibleProvider:
  """OpenAI Chat Completions structured JSON Schema client; secrets are never logged."""
- provider_name='openai-compatible'
- def __init__(self,api_key:str,model:str='gpt-4o-mini',base_url:str='https://api.openai.com/v1',temperature:float=0.0,timeout:float=20.0,max_output_tokens:int=700):
+ def __init__(self,api_key:str,model:str='gpt-4o-mini',base_url:str='https://api.openai.com/v1',temperature:float=0.0,timeout:float=20.0,max_output_tokens:int=700,provider_name:str='openai-compatible'):
   if not api_key:raise ValueError('LLM API key is required')
   if not model or len(model)>120:raise ValueError('invalid LLM model')
   if not 0<=temperature<=2 or not 1<=timeout<=120 or not 64<=max_output_tokens<=8192:raise ValueError('invalid LLM provider settings')
-  self.api_key=api_key;self.model=model;self.base_url=base_url.rstrip('/');self.temperature=temperature;self.timeout=timeout;self.max_output_tokens=max_output_tokens
+  self.api_key=api_key;self.model=model;self.base_url=base_url.rstrip('/');self.temperature=temperature;self.timeout=timeout;self.max_output_tokens=max_output_tokens;self.provider_name=provider_name
  def generate_structured_plan(self,*,system_prompt,input_json,schema):
   payload={'model':self.model,'temperature':self.temperature,'max_completion_tokens':self.max_output_tokens,'messages':[{'role':'system','content':system_prompt},{'role':'user','content':input_json}],'response_format':{'type':'json_schema','json_schema':{'name':'support_action_plan','strict':True,'schema':schema}}}
   request=urllib.request.Request(self.base_url+'/chat/completions',data=json.dumps(payload).encode(),headers={'Authorization':'Bearer '+self.api_key,'Content-Type':'application/json','X-Client-Request-Id':uuid.uuid4().hex},method='POST')
@@ -74,6 +73,11 @@ def load_local_env():
 
 def provider_from_env():
  load_local_env()
- key=os.getenv('OPENAI_API_KEY','').strip()
+ provider=os.getenv('LLM_PROVIDER','openai').strip().lower()
+ if provider not in {'openai','openrouter'}:raise ValueError('LLM_PROVIDER must be openai or openrouter')
+ key_name='OPENROUTER_API_KEY' if provider=='openrouter' else 'OPENAI_API_KEY'
+ key=os.getenv(key_name,'').strip()
  if not key:return None
- return OpenAICompatibleProvider(key,model=os.getenv('LLM_MODEL','gpt-4o-mini'),base_url=os.getenv('LLM_BASE_URL','https://api.openai.com/v1'),temperature=float(os.getenv('LLM_TEMPERATURE','0')),timeout=float(os.getenv('LLM_TIMEOUT_SECONDS','20')),max_output_tokens=int(os.getenv('LLM_MAX_OUTPUT_TOKENS','700')))
+ base_url=os.getenv('LLM_BASE_URL','https://openrouter.ai/api/v1' if provider=='openrouter' else 'https://api.openai.com/v1')
+ model=os.getenv('LLM_MODEL','openrouter/free' if provider=='openrouter' else 'gpt-4o-mini')
+ return OpenAICompatibleProvider(key,model=model,base_url=base_url,temperature=float(os.getenv('LLM_TEMPERATURE','0')),timeout=float(os.getenv('LLM_TIMEOUT_SECONDS','20')),max_output_tokens=int(os.getenv('LLM_MAX_OUTPUT_TOKENS','700')),provider_name=provider)

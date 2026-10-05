@@ -31,4 +31,8 @@ Verification: `python -m unittest discover -s tests -v` passed 43 tests. `python
 
 Added standard-library loading of the project-local, gitignored `.env` for provider configuration; existing process environment values take precedence. `.env.example` remains deleted. A one-ticket OpenAI-compatible smoke request for T001 received HTTP 429 (`ProviderRateLimit`), so no model plan was returned and the full LLM suite was not run. The row passed only after deterministic fallback; this is not an LLM score. Recorded the result without API credentials or fabricated metrics in `reports/llm_vs_deterministic_2026-10-04.json` and `docs/LLM_VS_DETERMINISTIC.md`.
 
-The API key variable is present in the local ignored configuration, and no secret-pattern match was found in reachable Git history. The provider response does not distinguish request throttling from account quota. The API key itself was not displayed or recorded.
+The API key variable was present in the local ignored configuration, and no secret-pattern match was found in reachable Git history. The key itself was not displayed or recorded.
+
+## 2026-10-05 — OpenRouter provider selection
+
+Extended the existing structured-output provider configuration to select `openai` or `openrouter` by `LLM_PROVIDER`, using the corresponding environment key name. The existing provider contract, JSON Schema response format, timeout, validation, policy/tool boundaries, and fallback behavior are retained. Added a local `.env` configuration test for the OpenRouter URL/model without embedding credentials. The single requested OpenRouter smoke command was issued, but the execution result was not captured; therefore no model response, validation, fallback, or provider-error category can be confirmed. The full LLM evaluation was not run. The deterministic baseline remains unchanged. The final test suite passed 44 tests, and `git diff --check` passed.
