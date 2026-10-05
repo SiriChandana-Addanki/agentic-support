@@ -8,16 +8,18 @@
     "passed": 0,
     "success_rate": 0.0,
     "llm_successes": 0,
-    "llm_failed_with_fallback": 38,
+    "llm_failed_with_fallback": 0,
     "llm_failed_no_fallback": 0,
     "stable_tickets": 38,
-    "p50_latency_ms": 248.59
+    "p50_latency_ms": 248.59,
+    "llm_unevaluable_rate_limit": 38
   },
   "row_count": 38,
   "fixture_success_rows": 38,
   "llm_outcome_counts": {
     "llm_success": 0,
-    "llm_failed_with_fallback": 38,
+    "llm_failed_with_fallback": 0,
+    "llm_unevaluable_rate_limit_with_fallback": 38,
     "llm_failed_no_fallback": 0
   },
   "fallback_rows": 38,
@@ -30,306 +32,344 @@
     {
       "ticket_id": "T001",
       "action": "initiate_return_and_refund",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T002",
       "action": "escalate_human_approval",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T003",
       "action": "reject_return_policy",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T004",
       "action": "deny_cancellation_with_alternatives",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T005",
       "action": "escalate_logistics",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T006",
       "action": "update_address",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T007",
       "action": "switch_cod_to_prepaid",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T008",
       "action": "provide_refund_status",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T009",
       "action": "request_evidence",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T010",
       "action": "escalate_human_approval",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T011",
       "action": "create_replacement",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T012",
       "action": "initiate_return_and_refund",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T013",
       "action": "verify_identity",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T014",
       "action": "reschedule_delivery",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T015",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T016",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T017",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T018",
       "action": "cancel_order",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T019",
       "action": "provide_tracking_status",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T020",
       "action": "escalate_logistics",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T021",
       "action": "no_action_inform",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T022",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T023",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T024",
       "action": "reject_return_policy",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T025",
       "action": "cancel_order",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T026",
       "action": "ask_clarification",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T027",
       "action": "security_escalation",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T028",
       "action": "reschedule_return_pickup",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T029",
       "action": "provide_tracking_status",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T030",
       "action": "reject_injection_apply_policy",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T031",
       "action": "escalate_after_tool_failure",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T032",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T033",
       "action": "verify_state_before_retry",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T034",
       "action": "retry_then_answer",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T035",
       "action": "retry_then_answer",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T036",
       "action": "escalate_after_tool_failure",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T037",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     },
     {
       "ticket_id": "T038",
       "action": "escalate_human",
-      "outcome": "llm_failed_with_fallback",
+      "outcome": "llm_unevaluable_rate_limit_with_fallback",
       "failed_criteria": [],
       "fallback": true,
-      "planner_error_type": "ProviderRateLimit"
+      "planner_error_type": "ProviderRateLimit",
+      "fallback_reason": "provider_error:ProviderRateLimit"
     }
   ],
   "p50_planner_latency_ms": 246.195,
@@ -340,5 +380,16 @@
     "429": 38
   },
   "estimated_cost_usd": null,
-  "repeat_stability_run": "python -m support_agent evaluate --planner-type llm --repeats 3; 114/114 calls returned HTTP 429 and used fallback. See reports/llm_stability_2026-10-05.json."
+  "repeat_stability_run": "python -m support_agent evaluate --planner-type llm --repeats 3; 114/114 calls returned HTTP 429 and used fallback. See reports/llm_stability_2026-10-05.json.",
+  "llm_evaluation_note": "All recorded provider calls returned HTTP 429 and are unavailable/unevaluable. Zero evaluable responses is not an LLM accuracy score; fallback fixture correctness and repeat stability are fallback-only, not model accuracy or LLM stability.",
+  "t001_live_smoke": {
+    "provider": "OpenRouter",
+    "model": "nvidia/nemotron-3-super-120b-a12b:free",
+    "result": "real structured model response; valid ActionPlan; PolicyEngine approved; get_order_details then initiate_return executed; expected return state reached",
+    "fallback": false,
+    "latency_ms": 7387,
+    "input_tokens": 3028,
+    "output_tokens": 616,
+    "estimated_cost_usd": null
+  }
 }

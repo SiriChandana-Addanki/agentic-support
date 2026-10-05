@@ -8,10 +8,11 @@
     "passed": 0,
     "success_rate": 0.0,
     "llm_successes": 0,
-    "llm_failed_with_fallback": 114,
+    "llm_failed_with_fallback": 0,
     "llm_failed_no_fallback": 0,
     "stable_tickets": 38,
-    "p50_latency_ms": 226.26999999999998
+    "p50_latency_ms": 226.26999999999998,
+    "llm_unevaluable_rate_limit": 114
   },
   "row_count": 114,
   "provider_status_counts": {
@@ -22,7 +23,7 @@
   },
   "fallback_rows": 114,
   "llm_successes": 0,
-  "llm_failed_with_fallback": 114,
+  "llm_failed_with_fallback": 0,
   "llm_failed_no_fallback": 0,
   "fixture_success_rows": 114,
   "stable_tickets": 38,
@@ -32,5 +33,17 @@
   "token_usage_unavailable_rows": 114,
   "total_input_tokens": null,
   "total_output_tokens": null,
-  "estimated_cost_usd": null
+  "estimated_cost_usd": null,
+  "llm_evaluation_note": "All recorded provider calls returned HTTP 429 and are unavailable/unevaluable. Zero evaluable responses is not an LLM accuracy score; fallback fixture correctness and repeat stability are fallback-only, not model accuracy or LLM stability.",
+  "t001_live_smoke": {
+    "provider": "OpenRouter",
+    "model": "nvidia/nemotron-3-super-120b-a12b:free",
+    "result": "real structured model response; valid ActionPlan; PolicyEngine approved; get_order_details then initiate_return executed; expected return state reached",
+    "fallback": false,
+    "latency_ms": 7387,
+    "input_tokens": 3028,
+    "output_tokens": 616,
+    "estimated_cost_usd": null
+  },
+  "llm_unevaluable_rate_limit": 114
 }

@@ -11,7 +11,7 @@ from support_agent.llm_planner import LLMPlanner,PlannerValidationError,action_p
 from support_agent.mock_provider import MockLLMProvider
 from support_agent.orchestrator import Orchestrator
 from support_agent.planner import DeterministicPlanner,ShadowPlanner,planner_from_env
-from support_agent.providers import OpenAICompatibleProvider,ProviderTimeout,ProviderError,provider_from_env
+from support_agent.providers import OpenAICompatibleProvider,ProviderTimeout,ProviderError,ProviderRateLimit,provider_from_env
 from support_agent.retrieval import Retriever
 from support_agent.schemas import ActionPlan,RetrievedEvidence,TicketContext,ToolInvocation,TOOL_DEFINITIONS
 from support_agent.schemas import ToolContext,Trace
@@ -220,6 +220,15 @@ class LLMPlannerTests(unittest.TestCase):
   row=result['runs'][0]
   self.assertEqual(row['fixture_success'],1);self.assertEqual(row['success'],0)
   self.assertEqual(row['llm_outcome'],'llm_failed_with_fallback')
+
+ def test_rate_limited_fallback_is_classified_unevaluable(self):
+  provider=MockLLMProvider(responses=[ProviderRateLimit('limited',{'http_status':429,'response_received':False})])
+  result=run(DATA,['T029'],1,planner_type='llm',planner=LLMPlanner(provider))
+  row=result['runs'][0]
+  self.assertEqual(row['llm_outcome'],'llm_unevaluable_rate_limit_with_fallback')
+  self.assertEqual(result['summary']['llm_unevaluable_rate_limit'],1)
+  self.assertEqual(row['http_status'],429);self.assertTrue(row['fallback'])
+  self.assertEqual(row['fallback_reason'],'provider_error:ProviderRateLimit')
 
  def test_eligible_return_proposal_contains_ordered_resolution_write(self):
   s=Store(DATA);ticket=next(t for t in s.tickets.values() if t['scenario']=='return_delivered_within_window')

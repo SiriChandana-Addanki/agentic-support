@@ -48,7 +48,7 @@ class Orchestrator:
     trace.errors.append({'tool':'planner','type':type(e).__name__})
    except ProviderError as e:
     planner_observation()
-    trace.planner_validation='provider_error';trace.planner_error_type=type(e).__name__;trace.fallback=True
+    trace.planner_validation='provider_error';trace.planner_error_type=type(e).__name__;trace.fallback=True;trace.fallback_reason='provider_error:'+type(e).__name__
     trace.errors.append({'tool':'planner','type':type(e).__name__})
     plan=DeterministicPlanner().plan(ctx,evidence);plan.validate(ctx);break
    except (PlannerValidationError,ValueError,TypeError) as e:
@@ -59,7 +59,7 @@ class Orchestrator:
    if trace.planner_type=='llm':
     escalation=ToolInvocation('create_escalation',{'customer_id':ctx.customer_id,'order_id':ctx.order_id,'category':ctx.category,'summary':'Planner could not produce a valid plan','evidence_received':list(ctx.attachments),'actions_taken':[],'reason':'planner output invalid after one retry','priority':'normal'},True)
     plan=ActionPlan(ctx.category,'escalate_human',(escalation,),'Planner validation failed; specialist review required.')
-    plan.validate(ctx);trace.fallback=True;trace.planner_validation='invalid; validated escalation fallback'
+    plan.validate(ctx);trace.fallback=True;trace.fallback_reason=trace.fallback_reason or ('invalid_provider_response_after_retry' if trace.planner_error_type=='ProviderResponseError' else 'invalid_action_plan_after_retry');trace.planner_validation='invalid; validated escalation fallback'
    else:return finish('escalate_after_tool_failure','Planning output was invalid; a specialist will review.','escalated',True,'planner output invalid')
   trace.proposed_action=plan.action
   trace.proposed_tools=[i.tool for i in plan.invocations]
