@@ -137,4 +137,6 @@ class Orchestrator:
   trace.planner_request_id=observation.get('request_id');trace.planner_latency_ms+=observation.get('latency_ms',0)
   if trace.planner_model:trace.model=trace.planner_model
   trace.input_tokens=observation.get('input_tokens');trace.output_tokens=observation.get('output_tokens')
+  for name in ('http_status','provider_error_code','provider_error_message','selected_model','selected_provider','finish_reason','response_received','token_usage_unavailable','total_tokens'):
+   if name in observation:setattr(trace,name,observation[name])
   if observation.get('error_type'):trace.planner_error_type=observation['error_type']

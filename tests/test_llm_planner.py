@@ -202,7 +202,7 @@ class LLMPlannerTests(unittest.TestCase):
   request=call.call_args.args[0]
   payload=json.loads(request.data)
   self.assertEqual(payload['response_format']['json_schema']['strict'],True)
-  self.assertEqual(payload['reasoning_effort'],'none')
+  self.assertNotIn('reasoning_effort',payload)
   self.assertIn(b'Bearer test-secret',request.headers['Authorization'].encode())
   self.assertNotIn('test-secret',repr(response))
 
@@ -210,6 +210,12 @@ class LLMPlannerTests(unittest.TestCase):
   result=run(DATA,['T029'],1,planner_type='llm',planner=LLMPlanner(MockLLMProvider()))
   self.assertEqual(result['summary']['total'],1);self.assertEqual(result['runs'][0]['planner_type'],'llm')
   self.assertEqual(set(result['runs'][0]['c1'] for _ in [0]),{1})
+
+ def test_fallback_is_not_counted_as_llm_success(self):
+  result=run(DATA,['T029'],1,planner_type='llm',planner=LLMPlanner(MockLLMProvider('provider_error')))
+  row=result['runs'][0]
+  self.assertEqual(row['fixture_success'],1);self.assertEqual(row['success'],0)
+  self.assertEqual(row['llm_outcome'],'llm_failed_with_fallback')
 
  def test_shadow_mode_runs_llm_but_returns_only_deterministic_plan(self):
   p=MockLLMProvider(responses=[{'intent':'cancellation','action':'cancel_order','invocations':[{'tool':'cancel_order','params':{},'write':True}],'summary':'Propose cancellation.'}]);shadow=ShadowPlanner(DeterministicPlanner(),LLMPlanner(p))
