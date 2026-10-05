@@ -1,30 +1,81 @@
 # Agentic Support / Ticket Resolution System
 
-A **development-only deterministic support workflow baseline** for the supplied CSV/JSON dataset, with an optional OpenAI-compatible LLM planner. It is not production authenticated. It demonstrates a typed planner → policy → tool boundary: untrusted ticket text can propose no executable instruction; only a validated action plan and independently authorized tools may change state.
-
-## Run
-```bash
-python -m unittest discover -s tests -v
-python -m support_agent serve
-python -m support_agent evaluate --repeats 3
-python -m support_agent evaluate --repeats 3 --planner-type llm
-python -m support_agent compare --repeats 3
-```
-`POST /tickets` processes the JSON supplied by the caller (it never substitutes a fixture by ID). Required JSON fields are `ticket_id`, `customer_id`, `category`, and `message`; optional fields are `order_id`, `attachments`, and `verified`. `POST /evaluations` is the separate fixture-only endpoint. Both are unauthenticated development endpoints; do not expose resolutions or traces publicly.
+A portfolio demonstration of e-commerce ticket investigation and resolution with an explicit safety boundary: the LLM may propose a structured plan, while application policy authorizes actions and tools validate and execute them. The system uses synthetic customer, order, and ticket data. Its API is a development demonstration, not a production-authenticated service.
 
 ## Architecture
-The interchangeable planner contract returns a typed, strictly validated `ActionPlan`. `DeterministicPlanner` remains the default; `LLMPlanner` can propose a plan through a provider interface and cannot access `Store`, policy, or tools. `PolicyEngine` authorizes independently, and `Tools` independently revalidate ownership, account status, lifecycle, idempotency, evidence, stock, serviceability, and action-specific rules. `PLANNER_TYPE=shadow` optionally runs the LLM for comparison while the deterministic plan remains authoritative. The CSV `Store` models action outcomes in memory. `Retriever` performs lexical ranking over `data/business_rules.md` and returns typed evidence with document/section/chunk/version/rank/score/query metadata; it is not semantic RAG.
 
-No direct refund action exists. Returns only initiate downstream QC/refund handling. Attachment filenames are metadata only; no image is fabricated or inspected. Development principal identity is the supplied customer ID and is **not production authentication**. The optional OpenAI-compatible provider supports OpenAI or OpenRouter. It reads `LLM_PROVIDER`, the matching `OPENAI_API_KEY` or `OPENROUTER_API_KEY`, `LLM_MODEL`, `LLM_BASE_URL`, `LLM_TEMPERATURE`, `LLM_TIMEOUT_SECONDS`, and `LLM_MAX_OUTPUT_TOKENS` from process environment or local `.env` (gitignored). Process environment values take precedence. `.env.example` is intentionally absent. Without provider credentials, deterministic mode remains runnable. See [LLM_PLANNER.md](docs/LLM_PLANNER.md).
+```text
+Customer Ticket → TicketContext → Retrieval → Planner → ActionPlan
+                → PolicyEngine → authorized Tools → ToolResult
+                → Resolution / Escalation → Observability + Evaluation
+```
 
-## Safety and reliability
-Locked, unverified accounts cannot read order data regardless of category. Suspended accounts cannot perform return/replacement actions. Failure injection is accepted only by the evaluation harness, never `POST /tickets`. Ambiguous cancellation timeout causes a state re-read, not another cancellation. Traces record sanitized tool parameters, status, error type, duration, retry attempt, idempotency key, state transition, retrieval metadata, and final action. They intentionally omit messages, email, full addresses, OTPs, passwords, payment values, and raw tool output.
+**LLM proposes. PolicyEngine authorizes. Tools execute.** The deterministic and LLM planners share the typed `ActionPlan` contract. The LLM has no direct access to the store, policy engine, or tools. Proposed plans are schema and semantic validated before policy evaluation; tools independently check critical state and authorization conditions.
 
-## Evaluation
-The evaluator runs fixture tickets against a fresh store and records C1–C7: understanding, evidence retrieval attempt/evidence, tools, parameter validity, authorization, action, and actual final state. It also checks successful duplicate writes, extra write tools, and stability including final state across repeats. Results are fixture-conformance evidence, not model quality, security certification, production latency, or proof of production readiness.
+## Engineering features
 
-## Audit result
-The preserved deterministic reference is 114/114 passed, 38/38 stable, with 19 tests at commit `2c36765`; see `reports/deterministic_baseline_2026-10-04.json`. The current deterministic strict baseline remains 114/114 in the preserved comparison. `python -m support_agent compare --repeats 3` writes `reports/planner_comparison.json`. An earlier OpenAI-compatible smoke was rate limited; later OpenRouter T001 and full-evaluation results are recorded below. Fixture scores are not model-quality measures or production readiness claims.
+- Deterministic planner, optional structured-output LLM planner, bounded validation retry, and deterministic fallback.
+- Lexical retrieval over `data/business_rules.md`, returning concise, titled evidence with source metadata.
+- Policy authorization plus allowlisted tools with customer/order ownership, account state, lifecycle, amount, evidence, stock, and idempotency checks.
+- Return-window and refund/replacement limits, cancellation and delivery rules, escalation paths, and protected account handling.
+- Prompt-injection defenses that treat ticket content and retrieved excerpts as untrusted data.
+- Request traces for proposals, decisions, tool calls, fallback reason, and available provider/token metadata.
+- Fixture evaluation checks C1–C7, safety, actual final state, tool behavior, and repeat stability.
+- Existing JSON HTTP API, CLI, Docker image, and synthetic fixtures.
 
-## Latest LLM planner verification (2026-10-05)
-The live provider is OpenRouter with `nvidia/nemotron-3-super-120b-a12b:free`. T001 passed once with a real structured response, local and semantic validation, PolicyEngine approval, ordered `get_order_details` → `initiate_return`, expected state, and no fallback (7,388 ms; 3,028 input and 616 output tokens; cost unavailable). The subsequent full 38-ticket LLM run was rate limited on all 38 calls (HTTP 429); none of the 38 requests produced an evaluable LLM result; 0/38 evaluable requests is not a model accuracy score, and the 38 deterministic fallback outcomes are not LLM successes or accuracy. A three-repeat LLM stability command was also run: all 114 calls were rate limited and fell back, so 38/38 stable outcomes represent fallback only. See `reports/llm_eval_2026-10-05.json`, `reports/llm_stability_2026-10-05.json`, and `docs/PLANNER_COMPARISON.md`.
+Retrieval is deterministic lexical ranking, not vector search. Attachment names are metadata; files and images are not inspected. Refunds are not directly issued by an agent tool; return and cancellation flows only initiate the system's downstream refund process.
+
+## Quick start with Docker
+
+Build from the repository root:
+
+```bash
+docker build -t agentic-support .
+```
+
+Run the API on port 8000:
+
+```bash
+docker run --rm -p 8000:8000 agentic-support
+```
+
+The image starts the existing API with the deterministic planner by default. Check its health endpoint at `http://localhost:8000/health`. To provide optional LLM configuration from a local `.env`, pass it at runtime:
+
+```bash
+docker run --rm --env-file .env -p 8000:8000 agentic-support
+```
+
+The `.env` file is not included in the build context or image. For LLM use, set `PLANNER_TYPE=llm`, `LLM_PROVIDER`, `LLM_MODEL`, `LLM_BASE_URL`, `LLM_TEMPERATURE`, `LLM_TIMEOUT_SECONDS`, `LLM_MAX_OUTPUT_TOKENS`, and the matching `OPENAI_API_KEY` or `OPENROUTER_API_KEY`. Provider credentials are optional for deterministic use. The repository intentionally has no `.env.example`; configure these values locally and never commit credentials.
+
+Run checks using the same image:
+
+```bash
+docker run --rm agentic-support python -m unittest discover -s tests -v
+docker run --rm agentic-support python -m support_agent evaluate --planner-type deterministic
+```
+
+## Local execution
+
+Python 3.10 or newer is required. The application uses the standard library; `requirements.txt` is retained as the dependency manifest and currently has no third-party packages.
+
+```bash
+python -m unittest discover -s tests -v
+python -m support_agent evaluate --planner-type deterministic
+python -m support_agent serve
+```
+
+The API defaults to `127.0.0.1:8000` locally. `SUPPORT_HOST` and `SUPPORT_PORT` configure its bind address and port. `POST /tickets` uses the submitted request data; `POST /evaluations` runs the supplied fixtures. The service keeps state in memory and has no authentication, so do not expose it publicly.
+
+## Deterministic benchmark
+
+The reproducible baseline contains 38 scenarios: **38/38 passed and 38/38 stable** in the recorded deterministic run. The evaluator checks expected action and tools, policy and safety conditions, parameters, actual final state, and repeat stability. See [`reports/deterministic_baseline_2026-10-04.json`](reports/deterministic_baseline_2026-10-04.json).
+
+## Live LLM validation and limits
+
+A real OpenRouter-backed planner successfully produced a structured, valid `ActionPlan` for T001. The PolicyEngine authorized `get_order_details` followed by `initiate_return`; both tools executed, the expected return state was reached, and fallback was not used.
+
+The full 38-ticket live LLM benchmark was **unevaluable** because all provider requests received HTTP 429 rate-limit responses. This is an external provider limitation. **Do not interpret 0/38 evaluable responses as either 0% or 100% LLM accuracy.** The deterministic fallback remained available; fallback outcomes are not LLM successes or model accuracy. Repeated fallback stability is not LLM stability. Token usage and cost were unavailable for those rate-limited requests. Details are in [`reports/llm_eval_2026-10-05.json`](reports/llm_eval_2026-10-05.json), [`reports/llm_stability_2026-10-05.json`](reports/llm_stability_2026-10-05.json), and [`docs/PLANNER_COMPARISON.md`](docs/PLANNER_COMPARISON.md).
+
+## API and safety notes
+
+The interchangeable planner contract is `Planner.plan(TicketContext, RetrievedEvidence) -> ActionPlan`. The LLM receives allowlisted planning context and retrieval evidence, never store access or execution capability. `PolicyEngine` authorizes independently; tools revalidate ownership and action-specific rules at execution. Traces omit raw ticket messages, secrets, and raw tool output. The service uses in-memory synthetic data and is intended for local demonstration and evaluation, not production deployment.
